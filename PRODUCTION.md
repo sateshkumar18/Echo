@@ -20,7 +20,10 @@ Use this list before deploying to production.
 
 - **HTTPS**: Run behind a reverse proxy (IIS, nginx, Caddy) with TLS. Do not expose Kestrel directly to the internet without HTTPS.
 - **CORS**: Set `Cors:AllowedOrigins` in production to your dashboard origin and Chrome extension origin (e.g. `chrome-extension://YOUR_EXTENSION_ID`). Empty array means only localhost + chrome-extension are allowed (acceptable if extension is the only client).
-- **Swagger**: Disabled by default in production (`Cors:SwaggerInProduction: false`). Do not enable on a public URL without auth.
+- **Swagger**: Disabled by default in production (`Cors:SwaggerInProduction: false`). Do not enable on a public URL without auth. When enabled, Swagger is served at a configurable path:
+  - **Config:** `Swagger:BasePath` (in appsettings or env `Swagger__BasePath`). Production default in appsettings.Production.json is `product/swagger`.
+  - **URLs:** UI at `https://your-domain.com/product/swagger` or `https://your-domain.com/product/swagger/index.html`; spec at `https://your-domain.com/product/swagger/v1/swagger.json`.
+  - **Dev:** Default base path is `swagger` (e.g. `http://localhost:5012/swagger`).
 - **Errors**: In production, the API returns a generic message for unhandled exceptions; details are logged server-side only.
 - **Environment**: Set `ASPNETCORE_ENVIRONMENT=Production`.
 
@@ -52,6 +55,7 @@ Use this list before deploying to production.
 | Production API hides exception details | Yes |
 | CORS configurable for production | Yes |
 | Swagger off in production by default | Yes |
+| Swagger path configurable (`Swagger:BasePath`, e.g. `product/swagger`) | Yes |
 | BCrypt for passwords | Yes |
 | Auth on Echo endpoints + ownership checks | Yes |
 | HTTPS / reverse proxy | You must configure |

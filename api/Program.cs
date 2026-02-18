@@ -112,10 +112,15 @@ var app = builder.Build();
 
 var isProduction = app.Environment.IsProduction();
 var swaggerInProduction = builder.Configuration.GetValue<bool>("Cors:SwaggerInProduction");
+var swaggerBasePath = (builder.Configuration["Swagger:BasePath"] ?? "swagger").Trim().TrimEnd('/');
 if (!isProduction || swaggerInProduction)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(c => c.RouteTemplate = $"{swaggerBasePath}/{{documentName}}/swagger.json");
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint($"/{swaggerBasePath}/v1/swagger.json", "Echo API");
+        c.RoutePrefix = swaggerBasePath;
+    });
 }
 
 using (var scope = app.Services.CreateScope())
@@ -157,7 +162,7 @@ app.UseExceptionHandler(err =>
 app.MapGet("/", () =>
 {
     if (!isProduction || swaggerInProduction)
-        return Results.Redirect("/swagger", permanent: false);
+        return Results.Redirect($"/{swaggerBasePath}", permanent: false);
     return Results.NotFound();
 });
 

@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Echo Recorder</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <div class="title-block">
+          <div id="headerDot" class="dot" aria-hidden="true"></div>
+          <h1>Echo</h1>
+        </div>
+        <p class="subtitle">Unlimited Meeting Recorder</p>
+      </header>
+
+      <section id="authSection" class="auth-section">
+        <label class="auth-label">API URL</label>
+        <input type="text" id="apiUrlInput" class="auth-input" placeholder="https://api.yourdomain.com" />
+        <div class="auth-tabs">
+          <button type="button" id="authTabLogin" class="auth-tab active">Log in</button>
+          <button type="button" id="authTabRegister" class="auth-tab">Register</button>
+        </div>
+        <div id="authLoginForm">
+          <label class="auth-label">Email</label>
+          <input type="email" id="authEmail" class="auth-input" placeholder="you@example.com" />
+          <label class="auth-label">Password</label>
+          <input type="password" id="authPassword" class="auth-input" placeholder="••••••••" />
+          <button id="loginBtn" class="btn primary">Log in</button>
+        </div>
+        <div id="authRegisterForm" class="hidden">
+          <label class="auth-label">Name</label>
+          <input type="text" id="authDisplayName" class="auth-input" placeholder="Your name" />
+          <label class="auth-label">Email</label>
+          <input type="email" id="authRegisterEmail" class="auth-input" placeholder="you@example.com" />
+          <label class="auth-label">Password (min 6 characters)</label>
+          <input type="password" id="authRegisterPassword" class="auth-input" placeholder="••••••••" />
+          <label class="auth-label">Confirm password</label>
+          <input type="password" id="authConfirmPassword" class="auth-input" placeholder="••••••••" />
+          <label class="auth-terms">
+            <input type="checkbox" id="authTermsCheck" />
+            <span>I agree to record responsibly and notify participants when required.</span>
+          </label>
+          <button id="registerBtn" class="btn primary">Create account</button>
+        </div>
+        <p id="authError" class="auth-error hidden"></p>
+      </section>
+
+      <section id="mainSection" class="main-section hidden">
+        <p class="auth-user"><span id="authUserEmail"></span> <button type="button" id="logoutBtn" class="btn-link">Log out</button></p>
+        <p id="upgradeSection" class="upgrade-section hidden">
+          <button type="button" id="upgradeArcadeBtn" class="btn secondary btn-sm">Arcade Pass $9/mo</button>
+          <button type="button" id="upgradeProBtn" class="btn secondary btn-sm">Echo Pro $5/mo</button>
+        </p>
+      </section>
+
+      <section id="statusSection" class="status">
+        <div id="statusText">Idle</div>
+        <div id="timer">00:00:00</div>
+      </section>
+
+      <section id="visualizerSection" class="visualizer">
+        <div id="bars"></div>
+        <p id="audioWarning" class="warning hidden">Tab may be silent. Play audio in the tab (e.g. start a video) to record.</p>
+      </section>
+
+      <section id="controlsSection" class="controls">
+        <button id="toggleBtn" class="btn primary">Start Recording</button>
+        <label class="monitor" title="Audio is always recorded. This only controls whether you hear it while recording (Chrome mutes the tab; turn ON to hear).">
+          <input id="monitorToggle" type="checkbox" />
+          <span>Play tab audio while recording (audio is always recorded; turn ON only to hear)</span>
+        </label>
+        <label class="monitor">
+          <input id="micToggle" type="checkbox" />
+          <span>Include my microphone (records your voice too)</span>
+        </label>
+        <div class="tabs">
+          <button id="recordTab" class="tab-btn active">Record</button>
+          <button id="recordingsTab" class="tab-btn">Recordings</button>
+        </div>
+      </section>
+
+      <section id="recordingsSection" class="recordings-section hidden">
+        <div class="recordings-header">
+          <span>Saved in this browser</span>
+          <button type="button" id="refreshRecordingsBtn" class="btn-link">Refresh</button>
+        </div>
+        <div id="recordingsList" class="recordings-list">
+          <p class="loading">Loading recordings...</p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <small>You are responsible for notifying participants.</small>
+      </footer>
+    </main>
+
+    <script src="popup.js" type="module"></script>
+  </body>
+  </html>

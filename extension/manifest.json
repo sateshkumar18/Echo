@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "Echo – Unlimited Meeting Recorder",
+  "description": "Record audio from the current tab in long meetings, chunk it safely, and sync to Echo backend for transcription and summaries.",
+  "version": "0.1.0",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Echo Recorder",
+    "default_popup": "popup/popup.html"
+  },
+  "permissions": [
+    "tabCapture",
+    "storage",
+    "unlimitedStorage",
+    "notifications",
+    "offscreen",
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://*/*",
+    "http://localhost:5012/*",
+    "http://127.0.0.1:5012/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content/overlay.js"],
+      "css": ["content/overlay.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "offline_enabled": true,
+  "minimum_chrome_version": "116",
+  "externally_connectable": {
+    "matches": [
+      "*://localhost/*"
+    ]
+  }
+}

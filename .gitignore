@@ -1,0 +1,59 @@
+# ========== ASP.NET Core ==========
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.userosscache
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.scc
+project.lock.json
+project.fragment.lock.json
+artifacts/
+**/Properties/launchSettings.json
+**/publish/
+**/PublishProfiles/
+
+# API local chunk storage (recorded audio – do not commit)
+api/Data/Chunks/
+
+# ========== Secrets & local config (never commit) ==========
+api/appsettings.Development.json
+**/appsettings.*.local.json
+*.pfx
+
+# ========== Environment ==========
+.env
+.env.local
+.env.*.local
+worker/.env
+
+# ========== Python ==========
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# ========== Node / Next.js ==========
+dashboard/node_modules/
+dashboard/.next/
+dashboard/.env.local
+
+# ========== IDE / OS ==========
+.vs/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+*.local

@@ -2,6 +2,8 @@
 // - Manages recording sessions
 // - Coordinates tabCapture + offscreen document
 
+import { BUILTIN_API_URL } from './config.js';
+
 const OFFSCREEN_URL = 'offscreen/offscreen.html';
 const DEFAULT_API_BASE = 'http://localhost:5012';
 
@@ -9,7 +11,10 @@ let currentSession = null;
 
 async function getApiBase() {
   const { echoApiBase } = await chrome.storage.local.get('echoApiBase');
-  return (echoApiBase && echoApiBase.trim()) ? echoApiBase.replace(/\/$/, '') : DEFAULT_API_BASE;
+  const fromStorage = (echoApiBase && echoApiBase.trim()) ? echoApiBase.replace(/\/$/, '') : '';
+  if (fromStorage) return fromStorage;
+  if (BUILTIN_API_URL && BUILTIN_API_URL.trim()) return BUILTIN_API_URL.trim().replace(/\/$/, '');
+  return DEFAULT_API_BASE;
 }
 
 async function getAuthHeaders() {

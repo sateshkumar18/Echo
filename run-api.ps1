@@ -5,4 +5,4 @@ $apiDir = Join-Path $PSScriptRoot "api"
 Set-Location -Path $apiDir
 dotnet run
  
- 
+  

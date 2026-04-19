@@ -1,8 +1,10 @@
 // Popup script: auth, controls Start/Stop, timer + visualizer
 
 import { initDB, getAllSessions, downloadSessionAsFile, deleteSession } from '../utils/indexeddb.js';
+import { BUILTIN_API_URL } from '../config.js';
 
 const authSection = document.getElementById('authSection');
+const apiUrlRow = document.getElementById('apiUrlRow');
 const mainSection = document.getElementById('mainSection');
 const statusSection = document.getElementById('statusSection');
 const visualizerSection = document.getElementById('visualizerSection');
@@ -48,10 +50,23 @@ let currentView = 'record';
 let monitorEnabled = true;
 let includeMic = false;
 
+function getApiBaseFromPopup() {
+  const fromInput = (apiUrlInput.value || '').trim();
+  if (fromInput) return fromInput.replace(/\/$/, '');
+  if (BUILTIN_API_URL && BUILTIN_API_URL.trim()) return BUILTIN_API_URL.trim().replace(/\/$/, '');
+  return 'http://localhost:5012';
+}
+
 initBars();
 (async () => {
   const { echoAuthToken, echoApiBase, echoUserEmail, echoUserDisplayName, echoSubscriptionTier, echoCurrentSession } = await chrome.storage.local.get(['echoAuthToken', 'echoApiBase', 'echoUserEmail', 'echoUserDisplayName', 'echoSubscriptionTier', 'echoCurrentSession']);
-  if (echoApiBase) apiUrlInput.value = echoApiBase;
+  if (BUILTIN_API_URL && BUILTIN_API_URL.trim()) {
+    if (apiUrlRow) apiUrlRow.classList.add('hidden');
+    apiUrlInput.value = BUILTIN_API_URL.trim().replace(/\/$/, '');
+  } else {
+    if (apiUrlRow) apiUrlRow.classList.remove('hidden');
+    if (echoApiBase) apiUrlInput.value = echoApiBase;
+  }
   if (echoAuthToken) {
     authSection.classList.add('hidden');
     mainSection.classList.remove('hidden');
@@ -93,7 +108,7 @@ restoreMonitorSetting();
 restoreMicSetting();
 
 loginBtn.addEventListener('click', async () => {
-  const base = (apiUrlInput.value || '').trim() || 'http://localhost:5012';
+  const base = getApiBaseFromPopup();
   const email = (authEmail.value || '').trim();
   const password = authPassword.value || '';
   authError.classList.add('hidden');
@@ -137,7 +152,7 @@ loginBtn.addEventListener('click', async () => {
 });
 
 registerBtn.addEventListener('click', async () => {
-  const base = (apiUrlInput.value || '').trim() || 'http://localhost:5012';
+  const base = getApiBaseFromPopup();
   const displayName = (authDisplayName?.value || '').trim();
   const email = (authRegisterEmail?.value || authEmail?.value || '').trim().toLowerCase();
   const password = authRegisterPassword?.value || '';
@@ -215,7 +230,7 @@ logoutBtn.addEventListener('click', async () => {
 
 async function openCheckout(tier) {
   const { echoAuthToken, echoApiBase } = await chrome.storage.local.get(['echoAuthToken', 'echoApiBase']);
-  const base = (echoApiBase || '').trim() || 'http://localhost:5012';
+  const base = ((echoApiBase || '').trim() || (BUILTIN_API_URL || '').trim() || 'http://localhost:5012').replace(/\/$/, '');
   if (!echoAuthToken) {
     alert('Please log in first.');
     return;
@@ -459,7 +474,7 @@ async function loadRecordings() {
   try {
     recordingsList.innerHTML = '<p class="loading">Loading recordings...</p>';
     const { echoAuthToken, echoApiBase } = await chrome.storage.local.get(['echoAuthToken', 'echoApiBase']);
-    const base = (echoApiBase && echoApiBase.trim()) ? echoApiBase.replace(/\/$/, '') : 'http://localhost:5012';
+    const base = ((echoApiBase || '').trim() || (BUILTIN_API_URL || '').trim() || 'http://localhost:5012').replace(/\/$/, '');
 
     if (!echoAuthToken) {
       recordingsList.innerHTML = '<p class="empty">Log in to see your recordings.</p>';
@@ -518,7 +533,7 @@ async function loadRecordings() {
         const sessionId = e.target.dataset.sessionId;
         try {
           const { echoAuthToken: token, echoApiBase: apiBase } = await chrome.storage.local.get(['echoAuthToken', 'echoApiBase']);
-          const b = (apiBase && apiBase.trim()) ? apiBase.replace(/\/$/, '') : 'http://localhost:5012';
+          const b = ((apiBase || '').trim() || (BUILTIN_API_URL || '').trim() || 'http://localhost:5012').replace(/\/$/, '');
           const r = await fetch(`${b}/echo/session/${sessionId}`, { headers: { 'Authorization': 'Bearer ' + token } });
           if (!r.ok) { alert('Could not load session.'); return; }
           const data = await r.json();
